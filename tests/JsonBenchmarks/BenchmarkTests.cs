@@ -37,6 +37,16 @@ namespace JsonBenchmarksTests
             AssertResponse(sut.ClusterHealthResponse);
         }
 
+        [Fact]
+        public void CustomReaderTest()
+        {
+            var sut = new Benchmarks();
+            sut.Setup();
+            sut.CustomReaderBenchmark();
+
+            AssertResponse(sut.ClusterHealthResponse);
+        }
+
         private static void AssertResponse(ClusterHealthResponse response)
         {
             response.Should().NotBeNull();
