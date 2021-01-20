@@ -1,15 +1,16 @@
 using System.Threading.Tasks;
 using FluentAssertions;
+using JsonBenchmarks;
 using Xunit;
 
 namespace JsonBenchmarksTests
 {
-    public class Benchmarks
+    public class BenchmarkTests
     {
         [Fact]
         public void NewtonsoftJsonTest()
         {
-            var sut = new JsonBenchmarks();
+            var sut = new Benchmarks();
             sut.Setup();
             sut.NewtonsoftJsonBenchmark();
 
@@ -19,7 +20,7 @@ namespace JsonBenchmarksTests
         [Fact]
         public async Task Utf8JsonTest()
         {
-            var sut = new JsonBenchmarks();
+            var sut = new Benchmarks();
             sut.Setup();
             await sut.Utf8JsonBenchmark();
 
@@ -29,7 +30,7 @@ namespace JsonBenchmarksTests
         [Fact]
         public async Task SystemTextJsonTest()
         {
-            var sut = new JsonBenchmarks();
+            var sut = new Benchmarks();
             sut.Setup();
             await sut.SystemTextJsonBenchmark();
 
