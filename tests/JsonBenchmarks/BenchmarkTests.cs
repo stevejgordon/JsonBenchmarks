@@ -7,35 +7,35 @@ namespace JsonBenchmarksTests
 {
     public class BenchmarkTests
     {
-        [Fact]
-        public void NewtonsoftJsonTest()
-        {
-            var sut = new Benchmarks();
-            sut.Setup();
-            sut.NewtonsoftJsonBenchmark();
+        //[Fact]
+        //public void NewtonsoftJsonTest()
+        //{
+        //    var sut = new Benchmarks();
+        //    sut.Setup();
+        //    sut.NewtonsoftJsonBenchmark();
 
-            AssertResponse(sut.ClusterHealthResponse);
-        }
+        //    AssertResponse(sut.ClusterHealthResponse);
+        //}
 
-        [Fact]
-        public async Task Utf8JsonTest()
-        {
-            var sut = new Benchmarks();
-            sut.Setup();
-            await sut.Utf8JsonBenchmark();
+        //[Fact]
+        //public async Task Utf8JsonTest()
+        //{
+        //    var sut = new Benchmarks();
+        //    sut.Setup();
+        //    await sut.Utf8JsonBenchmark();
 
-            AssertResponse(sut.ClusterHealthResponse);
-        }
+        //    AssertResponse(sut.ClusterHealthResponse);
+        //}
 
-        [Fact]
-        public async Task SystemTextJsonTest()
-        {
-            var sut = new Benchmarks();
-            sut.Setup();
-            await sut.SystemTextJsonBenchmark();
+        //[Fact]
+        //public async Task SystemTextJsonTest()
+        //{
+        //    var sut = new Benchmarks();
+        //    sut.Setup();
+        //    await sut.SystemTextJsonBenchmark();
 
-            AssertResponse(sut.ClusterHealthResponse);
-        }
+        //    AssertResponse(sut.ClusterHealthResponse);
+        //}
 
         [Fact]
         public void CustomReaderTest()
@@ -43,6 +43,16 @@ namespace JsonBenchmarksTests
             var sut = new Benchmarks();
             sut.Setup();
             sut.CustomReaderBenchmark();
+
+            AssertResponse(sut.ClusterHealthResponse);
+        }
+
+        [Fact]
+        public void CustomReaderTwoTest()
+        {
+            var sut = new Benchmarks();
+            sut.Setup();
+            sut.CustomReaderBenchmarkTwo();
 
             AssertResponse(sut.ClusterHealthResponse);
         }
