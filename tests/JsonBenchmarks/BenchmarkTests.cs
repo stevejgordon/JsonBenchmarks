@@ -56,11 +56,39 @@ namespace JsonBenchmarksTests
 
             AssertResponse(sut.ClusterHealthResponse);
         }
+        
+        [Fact]
+        public void CustomReaderThreeTest()
+        {
+            var sut = new Benchmarks();
+            sut.Setup();
+            sut.CustomReaderBenchmarkThree();
 
-        private static void AssertResponse(ClusterHealthResponse response)
+            AssertResponse(sut.ClusterHealthResponse);
+        }
+        [Fact]
+        public void CustomReaderThreeUnknownPropertiesTest()
+        {
+            var sut = new Benchmarks();
+            sut.Setup();
+            sut.CustomReaderBenchmarkThreeUnknownProperties();
+
+            AssertResponse(sut.ClusterHealthResponse);
+        }
+        [Fact]
+        public void CustomReaderThreeLargeTest()
+        {
+            var sut = new Benchmarks();
+            sut.Setup();
+            sut.CustomReaderBenchmarkThreeLarge();
+
+            AssertResponse(sut.ClusterHealthResponse, Benchmarks.LargeString);
+        }
+
+        private static void AssertResponse(ClusterHealthResponse response, string clusterName = "testcluster")
         {
             response.Should().NotBeNull();
-            response.ClusterName.Should().Be("testcluster");
+            response.ClusterName.Should().Be(clusterName);
             response.Status.Should().Be(Health.Yellow);
             response.TimedOut.Should().BeFalse();
             response.NumberOfNodes.Should().Be(1);
