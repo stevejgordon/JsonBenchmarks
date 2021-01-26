@@ -37,6 +37,9 @@ namespace JsonBenchmarks
     [MemoryDiagnoser]
     public class Benchmarks
     {
+        //force a large string to go over the rented buffer
+        public static readonly string LargeString = new('a', 4096 * 4);
+        
         private const string JsonResponse = @"{
           ""cluster_name"" : ""testcluster"",
           ""status"" : ""yellow"",
@@ -54,8 +57,53 @@ namespace JsonBenchmarks
           ""task_max_waiting_in_queue_millis"": 100,
           ""active_shards_percent_as_number"": 50.0
         }";
+        
+        private const string JsonResponseUnknownProperties = @"{
+          ""cluster_name"" : ""testcluster"",
+          ""status"" : ""yellow"",
+          ""timed_out"" : false,
+          ""number_of_nodes"" : 1,
+          ""number_of_data_nodes"" : 2,
+          ""active_primary_shards"" : 3,
+          ""active_shards"" : 4,
+          ""relocating_shards"" : 5,
+          ""initializing_shards"" : 6,
+          ""unassigned_shards"" : 7,
+          ""delayed_unassigned_shards"": 8,
+          ""number_of_pending_tasks"" : 9,
+          ""number_of_in_flight_fetch"": 10,
+          ""task_max_waiting_in_queue_millis"": 100,
+          ""active_shards_percent_as_number"": 50.0,
+          ""property_we_dont_know"": {
+            ""number_of_nodes"": 2
+          }
+        }";
+        private static readonly string JsonResponseLarge = $@"{{
+          ""cluster_name"" : ""{LargeString}"",
+          ""status"" : ""yellow"",
+          ""timed_out"" : false,
+          ""number_of_nodes"" : 1,
+          ""number_of_data_nodes"" : 2,
+          ""active_primary_shards"" : 3,
+          ""new_property"" : ""${LargeString}"",
+          ""active_shards"" : 4,
+          ""relocating_shards"" : 5,
+          ""initializing_shards"" : 6,
+          ""unassigned_shards"" : 7,
+          ""delayed_unassigned_shards"": 8,
+          ""number_of_pending_tasks"" : 9,
+          ""number_of_in_flight_fetch"": 10,
+          ""task_max_waiting_in_queue_millis"": 100,
+          ""active_shards_percent_as_number"": 50.0,
+          ""property_we_dont_know"": {{
+            ""number_of_nodes"": 2
+          }}
+        }}";
+        
 
         private Stream _stream;
+        private Stream _streamLarge;
+        private Stream _streamUnknownProperties;
 
         public ClusterHealthResponse ClusterHealthResponse { get; private set; }
 
@@ -71,6 +119,8 @@ namespace JsonBenchmarks
         public void Setup()
         {
             _stream = new MemoryStream(Encoding.UTF8.GetBytes(JsonResponse));
+            _streamUnknownProperties = new MemoryStream(Encoding.UTF8.GetBytes(JsonResponseUnknownProperties));
+            _streamLarge = new MemoryStream(Encoding.UTF8.GetBytes(JsonResponseLarge));
         }
 
         //[Benchmark]
@@ -99,7 +149,7 @@ namespace JsonBenchmarks
         //    ClusterHealthResponse = await System.Text.Json.JsonSerializer.DeserializeAsync<ClusterHealthResponse>(_stream, JsonOptions);
         //}
 
-        [Benchmark]
+        //[Benchmark]
         public void CustomReaderBenchmark()
         {
             _stream.Position = 0;
@@ -112,6 +162,28 @@ namespace JsonBenchmarks
         {
             _stream.Position = 0;
             var reader = new ClusterHealthResponseReaderTwo(_stream);
+            ClusterHealthResponse = reader.Read();
+        }
+        
+        [Benchmark]
+        public void CustomReaderBenchmarkThree()
+        {
+            _stream.Position = 0;
+            var reader = new ClusterHealthResponseReaderThree(_stream);
+            ClusterHealthResponse = reader.Read();
+        }
+        
+        public void CustomReaderBenchmarkThreeUnknownProperties()
+        {
+            _stream.Position = 0;
+            var reader = new ClusterHealthResponseReaderThree(_streamUnknownProperties);
+            ClusterHealthResponse = reader.Read();
+        }
+        
+        public void CustomReaderBenchmarkThreeLarge()
+        {
+            _stream.Position = 0;
+            var reader = new ClusterHealthResponseReaderThree(_streamLarge);
             ClusterHealthResponse = reader.Read();
         }
     }
